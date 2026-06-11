@@ -1,18 +1,43 @@
-from selenium.webdriver.remote.webdriver import WebDriver
+import allure
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support import wait
 
-class ProductPage:
-    def __init__(self, driver: WebDriver):
-        self.driver = driver
-        self.product = (By.XPATH, "//img[@alt ='Sauce Labs Backpack']")
-        self.cart_button = (By.XPATH, "//button[@name ='add-to-cart']")
+from locators.products_page_locators import ProductPageLocators
+from pages.base_page import BasePage
 
-    def choose_product(self):
-        WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable(self.product))
-        self.driver.find_element(*self.product).click()
-    def add_product_to_cart(self):
+class ProductPage(BasePage):
+    locators = ProductPageLocators()
 
-        WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable(self.cart_button))
-        self.driver.find_element(*self.cart_button).click()
+    @allure.step("Проверить наличие заголовка страницы")
+    def check_displaying_title(self):
+        return self.element_is_visible(self.locators.page_title).is_displayed()
+
+    @allure.step("Проверить текст заголовка страницы")
+    def check_title(self):
+        return self.element_is_visible(self.locators.page_title).text
+
+    @allure.step("Добавить в корзину следующие товары: {products}")
+    def add_products_to_cart(self, *products):
+        pattern = self.locators.ADD_TO_CART_PATTERN
+        for product in products:
+            locator = (By.XPATH, pattern.format(product))
+            self.element_is_visible(locator).click()
+
+    @allure.step("Удалить из корзины следующие товары: {products}")
+    def remove_products_from_cart(self, *products):
+        pattern = self.locators.REMOVE_PATTERN
+        for product in products:
+            locator = (By.XPATH, pattern.format(product))
+            self.element_is_visible(locator).click()
+
+    @allure.step("Убедиться в наличии счётчика корзины")
+    def check_displaying_cart_counter(self):
+        return self.element_is_visible(self.locators.cart_counter).is_displayed()
+
+    @allure.step("Проверить состояние счётчика корзины")
+    def check_text_cart_counter(self):
+        return self.element_is_visible(self.locators.cart_counter).text
+
+    @allure.step("Проверить текст ссылки перехода в корзину")
+    def check_cart_link_text(self):
+        return self.element_is_visible(self.locators.cart_link).text
