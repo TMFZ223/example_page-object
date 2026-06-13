@@ -26,7 +26,7 @@ class TestCart:
         product_page.go_cart()
         products = cart_page.get_cart_products_list()
         check.equal(len(products), 1)
-        check.is_true(random_product in products, f"Товары в корзине: {products})
+        check.is_true(random_product in products, f"Товары в корзине: {products}")
 
     @allure.title("Продолжение покупок после добавления товара в корзину")
     def test_continue_shopping_after_add_product_to_cart(self, driver, login_page: LoginPage, product_page: ProductPage, cart_page: CartPage):
