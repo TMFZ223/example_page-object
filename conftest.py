@@ -3,10 +3,12 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.service import Service
-from utils.env_reader import EnvReader
+
+from pages.cart_page import CartPage
+from config import base_url
 from pages.login_page import LoginPage
 from pages.product_page import ProductPage
-base_url = EnvReader.get_env_variable_value("SAUCEDEMO_URL")
+
 
 @pytest.fixture(scope="function")
 def driver():
@@ -28,3 +30,7 @@ def login_page(driver):
 @pytest.fixture
 def product_page(driver):
     return ProductPage(driver)
+
+@pytest.fixture
+def cart_page(driver):
+    return CartPage(driver)
