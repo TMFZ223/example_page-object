@@ -1,13 +1,16 @@
 import allure
-from selenium.webdriver.remote.webdriver import WebDriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
+from locators.cart_page_locators import CartPageLocators
+from pages.base_page import BasePage
 
-class CartPage:
-    def __init__(self, driver: WebDriver):
-        self.driver = driver
-        self.cart_link = (By.XPATH, "//a[@class ='shopping_cart_link']")
-    def go_cart(self):
-        WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable(self.cart_link))
-        self.driver.find_element(*self.cart_link).click()
+class CartPage(BasePage):
+    locators = CartPageLocators()
+
+
+    @allure.step("Получить список товаров, добавленных в корзину")
+    def get_cart_products_list(self) -> list[str]:
+        elements = self.elements_are_visible(self.locators.cart_product)
+        return [product.text for product in elements]
+
+    @allure.step("Нажать на кнопку продолжения покупок")
+    def click_continue_shopping_button(self):
+        self.element_is_visible(self.locators.continue_shopping).click()
